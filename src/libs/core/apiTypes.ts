@@ -80,3 +80,7 @@ export type TWLSSearchResponse<O extends searchOption[]> = {
   data: SearchResultItem<O>[]
   page_info: TWLSSearchPageInfo
 }
+
+export type TWLSVideoThumbnailResponse = {
+  thumbnail: string
+}
