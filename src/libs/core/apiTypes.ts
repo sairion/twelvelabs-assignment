@@ -1,4 +1,4 @@
-export type TWLSIndex = {
+type TWLSIndex = {
   _id: string
   created_at: string
   updated_at: string
@@ -13,7 +13,7 @@ export type TWLSIndex = {
   }
 }
 
-export type TWLSPageInfo = {
+type TWLSPageInfo = {
   page: number
   limit_per_page: number
   total_page: number
@@ -21,7 +21,12 @@ export type TWLSPageInfo = {
   total_duration: number
 }
 
-export type TWLSSearchPageInfo = {
+export type TWLSIndexListResponse = {
+  data: TWLSIndex[]
+  page_info: TWLSPageInfo
+}
+
+type TWLSSearchPageInfo = {
   limit_per_page: number
   total_results: number
   page_expired_at: string
@@ -29,7 +34,17 @@ export type TWLSSearchPageInfo = {
   next_page_token: string
 }
 
-export type TWLSIndexListResponse = {
-  data: TWLSIndex[]
-  page_info: TWLSPageInfo
+type TWLSClass = {
+  name: string
+  score: number
+  duration_ratio: number
+}
+type TWLSClassification = {
+  video_id: string
+  classes: TWLSClass[]
+}
+
+export type TWLSClassificationResponse = {
+  data: TWLSClassification[]
+  page_info: TWLSSearchPageInfo
 }
