@@ -1,7 +1,12 @@
+import useIndexList from "@/libs/hooks/useIndexList"
+
 export default function Home() {
+  const { data } = useIndexList({ page: 1 })
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main className="">
       <div>Hello World!</div>
+      <pre>{JSON.stringify(data, null, 4)}</pre>
     </main>
   )
 }
