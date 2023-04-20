@@ -48,3 +48,35 @@ export type TWLSClassificationResponse = {
   data: TWLSClassification[]
   page_info: TWLSSearchPageInfo
 }
+
+export type searchOption = "visual" | "conversation" | "text_in_video" | "logo"
+
+type SearchResultItem<O extends searchOption[]> = {
+  score: number
+  start: number
+  end: number
+  metadata: [
+    {
+      type: O
+    }
+  ]
+  video_id: string
+  confidence: string
+  thumbnail_url: string
+  module_confidence: {
+    [k in O[number]]: string
+  }
+}
+
+export type TWLSSearchResponse<O extends searchOption[]> = {
+  search_pool: {
+    total_count: number
+    total_duration: number
+    index_id: string
+  }
+  query: string
+  search_options: O
+  conversation_option: "semantic" | "exact_match"
+  data: SearchResultItem<O>[]
+  page_info: TWLSSearchPageInfo
+}
