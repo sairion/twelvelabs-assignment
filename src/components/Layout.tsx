@@ -10,8 +10,8 @@ export default function Layout({
 }) {
   const router = useRouter()
   return (
-    <div className="w-full">
-      <header className="flex items-center justify-between sticky top-0 z-40 w-full border-b py-4 px-8">
+    <div className="relative flex min-h-screen flex-col">
+      <header className="flex items-center justify-between sticky top-0 bg-white z-10 w-full border-b py-4 px-8">
         <h1>Twelve Labs API playground</h1>
         <Tabs
           defaultValue={route}
@@ -26,8 +26,8 @@ export default function Layout({
           </TabsList>
         </Tabs>
       </header>
-      <section className="px-8 pt-4">
-        <main className="">{children}</main>
+      <section className="flex-1">
+        <main className="px-8 pt-4">{children}</main>
       </section>
     </div>
   )
