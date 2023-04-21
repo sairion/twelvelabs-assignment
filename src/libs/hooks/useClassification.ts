@@ -11,8 +11,6 @@ export default function useClassification({ limit = 10 }) {
           options: ["visual", "conversation", "text_in_video"],
           index_id: process.env.NEXT_PUBLIC_TWLS_LIST_INDEX_ID,
           classes,
-        },
-        searchParams: {
           page_limit: limit,
         },
       })
