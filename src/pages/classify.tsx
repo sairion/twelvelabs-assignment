@@ -4,6 +4,7 @@ import type { NextPageWithLayout } from "./_app"
 import Video from "@/components/Video"
 import GridLayout from "@/components/GridLayout"
 import useClassification from "@/libs/hooks/useClassification"
+import { Badge } from "@/components/ui/badge"
 
 const Page: NextPageWithLayout = () => {
   const { data, isLoading } = useClassification({ limit: 12 })
@@ -17,9 +18,11 @@ const Page: NextPageWithLayout = () => {
         return (
           <div key={index.video_id}>
             <Video id={index.video_id} />
-            {index.classes.map((data) => (
-              <>{data.name}</>
-            ))}
+            <div className="flex mt-4 pb-2 gap-1 flex-wrap">
+              {index.classes.map((data) => (
+                <Badge key={data.name}>{data.name}</Badge>
+              ))}
+            </div>
           </div>
         )
       })}
