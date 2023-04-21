@@ -6,10 +6,12 @@ export default function useSearch({
   query,
   searchOptions,
   limit = 10,
+  enabled,
 }: {
   query: string
   searchOptions: searchOption[]
   limit: number
+  enabled: boolean
 }) {
   return useQuery({
     queryKey: ["search", limit, searchOptions, query],
@@ -25,5 +27,6 @@ export default function useSearch({
       return response.json<TWLSSearchResponse<searchOption[]>>()
     },
     retry: false,
+    enabled,
   })
 }

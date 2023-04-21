@@ -1,5 +1,6 @@
-import Layout from "@/components/Layout"
 import { useState, type ReactElement } from "react"
+import { useDebounce } from "use-debounce"
+import Layout from "@/components/Layout"
 import type { NextPageWithLayout } from "./_app"
 import Video from "@/components/Video"
 import GridLayout from "@/components/GridLayout"
@@ -8,8 +9,13 @@ import { Input } from "@/components/ui/input"
 
 const Page: NextPageWithLayout = () => {
   const [query, setQuery] = useState("")
-  // TODO: use usedebounce hook to reduce requests
-  const { data } = useSearch({ query, limit: 12, searchOptions: ["visual"] })
+  const [debouncedQuery] = useDebounce(query, 1_000)
+  const { data } = useSearch({
+    query: debouncedQuery,
+    limit: 12,
+    searchOptions: ["visual"],
+    enabled: query.trim() !== "",
+  })
 
   return (
     <div>
