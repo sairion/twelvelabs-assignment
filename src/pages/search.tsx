@@ -1,6 +1,6 @@
-import { useState, type ReactElement, Dispatch, SetStateAction } from "react"
-import { useDebounce } from "use-debounce"
-import { Image as ImageIcon, MessageCircle, FileType, Loader2, type LucideIcon } from "lucide-react"
+import { useState, type ReactElement, Dispatch, SetStateAction, FormEvent } from "react"
+import { useDebouncedCallback } from "use-debounce"
+import { Image as ImageIcon, MessageCircle, FileType, type LucideIcon } from "lucide-react"
 import Layout from "@/components/Layout"
 import type { NextPageWithLayout } from "./_app"
 import Video from "@/components/Video"
@@ -41,27 +41,49 @@ const SearchOptionToggle: React.FC<{
 
 const Page: NextPageWithLayout = () => {
   const [query, setQuery] = useState("")
-  const [debouncedQuery] = useDebounce(query.trim(), 1_000)
   const [searchOptions, setSearchOptions] = useState<Set<searchOption>>(new Set(["visual" as searchOption]))
-  const enabled = debouncedQuery !== ""
-  const { data, isLoading, hasNextPage, fetchNextPage } = useSearch({
-    query: debouncedQuery,
+  const { data, isLoading, hasNextPage, fetchNextPage, refetch } = useSearch({
+    query: query,
     limit: 12,
     searchOptions: Array.from(searchOptions),
-    enabled,
+    enabled: query !== "",
   })
+  const handleSubmit = useDebouncedCallback(
+    (inputValue) => {
+      if (!inputValue) {
+        return
+      }
+      if (inputValue === query) {
+        refetch()
+        return
+      }
+
+      setQuery(inputValue)
+    },
+    1_100,
+    { leading: true }
+  )
+
+  const isSubmitting = query !== "" && (isLoading || handleSubmit.isPending())
 
   return (
     <div>
-      <div className="flex mb-4 w-full items-center space-x-2">
-        <Input
-          placeholder="Type something... ex) food"
-          onChange={(e) => {
-            setQuery(e.target.value)
-          }}
-        />
-        {enabled && isLoading ? <Loading /> : null}
-      </div>
+      <form className="flex mb-4 w-full items-center space-x-2">
+        <Input name="input" placeholder="Type something... ex) food" />
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          onClick={(e) => {
+            e.preventDefault()
+            // @ts-ignore
+            const form = new FormData(e.target?.form)
+            const formProps = Object.fromEntries(form)
+            const inputValue = formProps.input.toString().trim()
+            handleSubmit(inputValue)
+          }}>
+          {isSubmitting ? <Loading /> : "Search"}
+        </Button>
+      </form>
       <div>
         <small className="text-sm font-medium leading-none">Search Options</small>
         <div className="flex pt-2 pb-4 gap-2">
