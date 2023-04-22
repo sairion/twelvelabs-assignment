@@ -1,7 +1,6 @@
 import { useState, type ReactElement, Dispatch, SetStateAction } from "react"
 import { useDebounce } from "use-debounce"
 import { Image as ImageIcon, MessageCircle, FileType, Loader2, type LucideIcon } from "lucide-react"
-
 import Layout from "@/components/Layout"
 import type { NextPageWithLayout } from "./_app"
 import Video from "@/components/Video"
@@ -10,6 +9,7 @@ import useSearch from "@/libs/hooks/useSearch"
 import { Input } from "@/components/ui/input"
 import { Toggle } from "@/components/ui/toggle"
 import { searchOption } from "@/libs/core/apiTypes"
+import { Button } from "@/components/ui/button"
 
 const SearchOptionToggle: React.FC<{
   optionKey: searchOption
@@ -43,7 +43,7 @@ const Page: NextPageWithLayout = () => {
   const [debouncedQuery] = useDebounce(query.trim(), 1_000)
   const [searchOptions, setSearchOptions] = useState<Set<searchOption>>(new Set(["visual" as searchOption]))
   const enabled = debouncedQuery !== ""
-  const { data, isLoading } = useSearch({
+  const { data, isLoading, hasNextPage, fetchNextPage } = useSearch({
     query: debouncedQuery,
     limit: 12,
     searchOptions: Array.from(searchOptions),
@@ -88,11 +88,19 @@ const Page: NextPageWithLayout = () => {
         </div>
       </div>
       <GridLayout>
-        {data?.data.map((index, i) => {
-          // FIXME: API sends duplicated video ids sometimes
-          return <Video key={`${index.video_id}-${i}`} id={index.video_id} />
-        }) ?? null}
+        {data?.pages.map(
+          (page) =>
+            page.data.map((index, i) => {
+              // FIXME: API sends duplicated video ids sometimes
+              return <Video key={`${index.video_id}-${i}`} id={index.video_id} />
+            }) ?? null
+        )}
       </GridLayout>
+      {hasNextPage ? (
+        <div className="flex justify-center py-4">
+          <Button onClick={() => fetchNextPage()}>Load more</Button>
+        </div>
+      ) : null}
     </div>
   )
 }
