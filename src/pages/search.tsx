@@ -40,11 +40,11 @@ const SearchOptionToggle: React.FC<{
 
 const Page: NextPageWithLayout = () => {
   const [query, setQuery] = useState("")
-  const [debouncedQuery] = useDebounce(query, 1_000)
+  const [debouncedQuery] = useDebounce(query.trim(), 1_000)
   const [searchOptions, setSearchOptions] = useState<Set<searchOption>>(new Set(["visual" as searchOption]))
-  const enabled = query.trim() !== ""
+  const enabled = debouncedQuery !== ""
   const { data, isLoading } = useSearch({
-    query: debouncedQuery.trim(),
+    query: debouncedQuery,
     limit: 12,
     searchOptions: Array.from(searchOptions),
     enabled,
@@ -85,20 +85,12 @@ const Page: NextPageWithLayout = () => {
             searchOptions={searchOptions}
             setSearchOptions={setSearchOptions}
           />
-          {/*
-            // FIXME: 'logo' request emits 400 error
-          <SearchOptionToggle
-            optionKey="logo"
-            label="Logo"
-            icon={Hexagon}
-            searchOptions={searchOptions}
-            setSearchOptions={setSearchOptions}
-          /> */}
         </div>
       </div>
       <GridLayout>
-        {data?.data.map((index) => {
-          return <Video key={index.video_id} id={index.video_id} />
+        {data?.data.map((index, i) => {
+          // FIXME: API sends duplicated video ids sometimes
+          return <Video key={`${index.video_id}-${i}`} id={index.video_id} />
         }) ?? null}
       </GridLayout>
     </div>

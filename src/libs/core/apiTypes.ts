@@ -49,7 +49,7 @@ export type TWLSClassificationResponse = {
   page_info: TWLSSearchPageInfo
 }
 
-export type searchOption = "visual" | "conversation" | "text_in_video" | "logo"
+export type searchOption = "visual" | "conversation" | "text_in_video"
 
 type SearchResultItem<O extends searchOption[]> = {
   score: number
