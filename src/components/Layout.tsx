@@ -12,7 +12,7 @@ export default function Layout({
   return (
     <div className="relative flex min-h-screen flex-col">
       <header className="flex items-center justify-between sticky top-0 bg-white z-10 w-full border-b py-4 px-8">
-        <h1>Twelve Labs API playground</h1>
+        <h1>MeTube</h1>
         <Tabs
           defaultValue={route}
           className="w-[400px]"
