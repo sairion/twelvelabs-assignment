@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Toggle } from "@/components/ui/toggle"
 import { searchOption } from "@/libs/core/apiTypes"
 import { Button } from "@/components/ui/button"
+import { Loading } from "@/components/Loading"
 
 const SearchOptionToggle: React.FC<{
   optionKey: searchOption
@@ -59,7 +60,7 @@ const Page: NextPageWithLayout = () => {
             setQuery(e.target.value)
           }}
         />
-        {enabled && isLoading ? <Loader2 className="animate-spin text-gray-700" /> : null}
+        {enabled && isLoading ? <Loading /> : null}
       </div>
       <div>
         <small className="text-sm font-medium leading-none">Search Options</small>

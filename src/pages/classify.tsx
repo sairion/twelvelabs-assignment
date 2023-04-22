@@ -6,11 +6,12 @@ import GridLayout from "@/components/GridLayout"
 import useClassification from "@/libs/hooks/useClassification"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { PageLoading } from "@/components/Loading"
 
 const Page: NextPageWithLayout = () => {
   const { data, isLoading, hasNextPage, fetchNextPage } = useClassification({ limit: 12 })
   if (!data || isLoading) {
-    return <div>Loading...</div>
+    return <PageLoading />
   }
 
   return (

@@ -5,11 +5,12 @@ import useIndexList from "@/libs/hooks/useIndexList"
 import Video from "@/components/Video"
 import GridLayout from "@/components/GridLayout"
 import { Button } from "@/components/ui/button"
+import { PageLoading } from "@/components/Loading"
 
 const Page: NextPageWithLayout = () => {
   const { data, isLoading, hasNextPage, fetchNextPage } = useIndexList({ limit: 12 })
   if (!data || isLoading) {
-    return <div>Loading...</div>
+    return <PageLoading />
   }
 
   return (
