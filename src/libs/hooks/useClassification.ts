@@ -22,7 +22,7 @@ export default function useClassification({ limit = 10 }) {
       }
     },
     getNextPageParam: ({ page_info }) => page_info.next_page_token ?? undefined,
-    retry: false,
+    retry: 2,
   })
 }
 

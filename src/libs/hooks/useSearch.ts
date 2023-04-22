@@ -32,7 +32,6 @@ export default function useSearch({
       }
     },
     getNextPageParam: ({ page_info }) => page_info.next_page_token ?? undefined,
-    retry: false,
     enabled,
   })
 }
