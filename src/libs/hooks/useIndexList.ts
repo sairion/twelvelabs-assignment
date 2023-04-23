@@ -17,6 +17,5 @@ export default function useIndexList({ limit = 10 }) {
     getNextPageParam: ({ page_info }) => {
       return page_info.page + 1 > page_info.total_page ? undefined : page_info.page + 1
     },
-    retry: false,
   })
 }
