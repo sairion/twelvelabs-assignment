@@ -6,7 +6,7 @@ export function Loading() {
 
 export function PageLoading() {
   return (
-    <div className="flex items-center justify-center p-4">
+    <div className="flex items-center justify-center p-4 w-full">
       <Loading />
     </div>
   )

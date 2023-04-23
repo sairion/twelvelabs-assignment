@@ -16,22 +16,20 @@ const SearchOptionToggle: React.FC<{
   optionKey: searchOption
   label: string
   icon: LucideIcon
-  searchOptions: Set<searchOption>
-  setSearchOptions: Dispatch<SetStateAction<Set<searchOption>>>
+  searchOptions: searchOption[]
+  setSearchOptions: Dispatch<SetStateAction<searchOption[]>>
 }> = ({ optionKey, label, searchOptions, setSearchOptions, icon: Icon }) => {
   return (
     <Toggle
       aria-label={`Toggle ${label}`}
-      pressed={searchOptions.has(optionKey)}
-      onPressedChange={(pressed) => {
-        if (pressed) {
-          searchOptions.add(optionKey)
-        } else if (searchOptions.size > 1) {
-          searchOptions.delete(optionKey)
+      pressed={searchOptions.includes(optionKey)}
+      onPressedChange={(value) => {
+        const nextState = value ? [...searchOptions, optionKey] : searchOptions.filter((item) => item !== optionKey)
+        if (nextState.length > 0) {
+          setSearchOptions(nextState.sort())
         } else {
-          alert("At least one search option should be set.")
+          alert("At least one option should be set.")
         }
-        setSearchOptions(new Set(searchOptions))
       }}>
       <Icon className="mr-2 h-4 w-4" />
       {label}
@@ -41,11 +39,11 @@ const SearchOptionToggle: React.FC<{
 
 const Page: NextPageWithLayout = () => {
   const [query, setQuery] = useState("")
-  const [searchOptions, setSearchOptions] = useState<Set<searchOption>>(new Set(["visual" as searchOption]))
+  const [searchOptions, setSearchOptions] = useState<searchOption[]>(["visual"])
   const { data, isLoading, hasNextPage, fetchNextPage, refetch } = useSearch({
     query: query,
     limit: 12,
-    searchOptions: Array.from(searchOptions),
+    searchOptions: searchOptions,
     enabled: query !== "",
   })
   const handleSubmit = useDebouncedCallback(
