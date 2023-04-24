@@ -11,7 +11,7 @@ import { classes, type classesType } from "@/libs/core/classifyPrompts"
 import { Toggle } from "@/components/ui/toggle"
 
 const Page: NextPageWithLayout = () => {
-  const [selectedClasses, setSelectedClasses] = useState<classesType>([classes[0]])
+  const [selectedClasses, setSelectedClasses] = useState<classesType>(classes.slice())
   const { data, isLoading, hasNextPage, fetchNextPage } = useClassification({ classes: selectedClasses, limit: 12 })
 
   return (
