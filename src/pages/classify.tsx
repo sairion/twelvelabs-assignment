@@ -1,7 +1,7 @@
 import Layout from "@/components/Layout"
 import { useState, type ReactElement } from "react"
 import type { NextPageWithLayout } from "./_app"
-import Video from "@/components/Video"
+import { Video } from "@/components/Video"
 import GridLayout from "@/components/GridLayout"
 import useClassification from "@/libs/hooks/useClassification"
 import { Badge } from "@/components/ui/badge"
@@ -38,6 +38,7 @@ const Page: NextPageWithLayout = () => {
         <GridLayout>
           {data.pages.map((page) =>
             page.data.map((index) => {
+              console.log(index)
               return (
                 <div key={index.video_id}>
                   <Video id={index.video_id} />

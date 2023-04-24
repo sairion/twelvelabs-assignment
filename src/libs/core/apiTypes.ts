@@ -84,3 +84,17 @@ export type TWLSSearchResponse<Option extends searchOption[]> = {
 export type TWLSVideoThumbnailResponse = {
   thumbnail: string
 }
+
+export type TWLSVideoResponse = {
+  _id: string
+  created_at: string
+  updated_at: string
+  indexed_at: string
+  metadata: {
+    duration: number
+    filename: string
+    fps: number
+    height: number
+    width: number
+  }
+}
