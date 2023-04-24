@@ -51,33 +51,33 @@ export type TWLSClassificationResponse = {
 
 export type searchOption = "visual" | "conversation" | "text_in_video"
 
-type SearchResultItem<O extends searchOption[]> = {
+type SearchResultItem<Option extends searchOption[]> = {
   score: number
   start: number
   end: number
   metadata: [
     {
-      type: O
+      type: Option
     }
   ]
   video_id: string
   confidence: string
   thumbnail_url: string
   module_confidence: {
-    [k in O[number]]: string
+    [k in Option[number]]: string
   }
 }
 
-export type TWLSSearchResponse<O extends searchOption[]> = {
+export type TWLSSearchResponse<Option extends searchOption[]> = {
   search_pool: {
     total_count: number
     total_duration: number
     index_id: string
   }
   query: string
-  search_options: O
+  search_options: Option
   conversation_option: "semantic" | "exact_match"
-  data: SearchResultItem<O>[]
+  data: SearchResultItem<Option>[]
   page_info: TWLSSearchPageInfo
 }
 
