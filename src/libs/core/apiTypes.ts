@@ -68,7 +68,7 @@ type SearchResultItem<Option extends searchOption[]> = {
   }
 }
 
-export type TWLSSearchResponse<Option extends searchOption[]> = {
+export type TWLSSearchResponse<Option extends searchOption[] = searchOption[], Data = SearchResultItem<Option>[]> = {
   search_pool: {
     total_count: number
     total_duration: number
@@ -77,8 +77,30 @@ export type TWLSSearchResponse<Option extends searchOption[]> = {
   query: string
   search_options: Option
   conversation_option: "semantic" | "exact_match"
-  data: SearchResultItem<Option>[]
+  data: Data
   page_info: TWLSSearchPageInfo
+}
+
+export type TWLSSearchResponseVideoGroup = TWLSSearchResponse<
+  searchOption[],
+  {
+    clips: {
+      score: number
+      start: number
+      end: number
+      video_id: string
+      confidence: string
+      thumbnail_url: string
+    }[]
+    id: string
+  }[]
+>
+
+export function isVideoGroupResponse(
+  response: TWLSSearchResponse | TWLSSearchResponseVideoGroup,
+  groupBy: "clip" | "video"
+): response is TWLSSearchResponseVideoGroup {
+  return groupBy === "video"
 }
 
 export type TWLSVideoThumbnailResponse = {

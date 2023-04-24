@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { PageLoading } from "@/components/Loading"
 import SearchFilter, { defaultSearchParam } from "@/components/SearchFilter"
+import { isVideoGroupResponse } from "@/libs/core/apiTypes"
 
 const Page: NextPageWithLayout = () => {
   const [query, setQuery] = useState("")
@@ -86,13 +87,22 @@ const Page: NextPageWithLayout = () => {
       </form>
       <SearchFilter searchInterParams={searchInterParams} setInterSearchParams={setInterSearchParams} />
       <GridLayout>
-        {data?.pages.map(
-          (page) =>
-            page.data.map((index, i) => {
-              // FIXME: API sends duplicated video ids sometimes
-              return <Video key={`${index.video_id}-${i}`} id={index.video_id} />
-            }) ?? null
-        )}
+        {data?.pages.map((page) => {
+          return isVideoGroupResponse(page, groupBy)
+            ? page.data.map(({ clips }, i) => {
+                const clip = clips[0]
+                const id = `${clips[0].video_id}-${i}`
+                return (
+                  <div key={id}>
+                    <Video id={clip.video_id} thumbnailUrl={clip.thumbnail_url} />
+                  </div>
+                )
+              })
+            : page.data.map((index, i) => {
+                // FIXME: API sends duplicated video ids sometimes
+                return <Video key={`${index.video_id}-${i}`} id={index.video_id} />
+              }) ?? null
+        })}
       </GridLayout>
       {isLoading ? <PageLoading /> : null}
       {hasNextPage ? (

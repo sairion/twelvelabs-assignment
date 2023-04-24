@@ -11,24 +11,39 @@ function formatTime(seconds: number) {
   return [h, m > 9 ? m : h ? "0" + m : m || "0", s > 9 ? s : "0" + s].filter(Boolean).join(":")
 }
 
-export function VideoThumbnail({ id, children }: { id: string; children?: ReactNode }) {
-  const { data } = useVideoThumbnail({ id })
-
-  if (!data) {
-    return null
-  }
+export function VideoThumbnail({
+  id,
+  children,
+  thumbnailUrl,
+}: {
+  id: string
+  children?: ReactNode
+  thumbnailUrl?: string
+}) {
+  const { data } = useVideoThumbnail({ id, enabled: typeof thumbnailUrl === "undefined" })
+  thumbnailUrl = thumbnailUrl ?? data?.thumbnail ?? ""
 
   return (
     <div>
       <AspectRatio ratio={16 / 9}>
-        <Image fill src={data.thumbnail} alt="Video thumbnail image" className="rounded-md object-cover" />
+        <Image fill src={thumbnailUrl} alt="Video thumbnail image" className="rounded-md object-cover" />
       </AspectRatio>
       {children}
     </div>
   )
 }
 
-export function Video({ id, filename, duration }: { id: string; filename?: string; duration?: number }) {
+export function Video({
+  id,
+  filename,
+  duration,
+  thumbnailUrl,
+}: {
+  id: string
+  filename?: string
+  duration?: number
+  thumbnailUrl?: string
+}) {
   const enabled = typeof filename !== "string" || typeof duration !== "number"
   const { data } = useVideo({ id, enabled })
 
@@ -36,7 +51,7 @@ export function Video({ id, filename, duration }: { id: string; filename?: strin
   duration = duration ?? data?.metadata.duration ?? 0
 
   return (
-    <VideoThumbnail id={id}>
+    <VideoThumbnail id={id} thumbnailUrl={thumbnailUrl}>
       {filename && duration ? (
         <div className="text-xs py-2">
           <div className="pb-2 truncate" title={filename}>

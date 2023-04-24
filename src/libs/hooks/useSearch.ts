@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query"
 import api from "@/libs/core/api"
-import type { TWLSSearchResponse, searchOption } from "../core/apiTypes"
+import type { TWLSSearchResponse, TWLSSearchResponseVideoGroup, searchOption } from "../core/apiTypes"
 
 export type searchParamType = {
   groupBy: "clip" | "video"
@@ -57,7 +57,7 @@ export default function useSearch({
         const response = await api.post(`search`, {
           json,
         })
-        return response.json<TWLSSearchResponse<searchOption[]>>()
+        return response.json<TWLSSearchResponse | TWLSSearchResponseVideoGroup>()
       }
     },
     getNextPageParam: ({ page_info }) => page_info.next_page_token ?? undefined,

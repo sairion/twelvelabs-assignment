@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import api from "@/libs/core/api"
 import type { TWLSVideoThumbnailResponse } from "../core/apiTypes"
 
-export default function useVideoThumbnail({ id }: { id: string }) {
+export default function useVideoThumbnail({ id, enabled }: { id: string; enabled: boolean }) {
   return useQuery({
     queryKey: ["videoThumbnail", id],
     queryFn: async () => {
@@ -10,5 +10,6 @@ export default function useVideoThumbnail({ id }: { id: string }) {
       return response.json<TWLSVideoThumbnailResponse>()
     },
     retry: false,
+    enabled,
   })
 }
