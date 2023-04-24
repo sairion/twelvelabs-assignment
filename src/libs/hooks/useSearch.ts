@@ -39,18 +39,23 @@ export default function useSearch({
         const response = await api.get(`search/${pageParam}`)
         return response.json<TWLSSearchResponse<searchOption[]>>()
       } else {
+        // FIXME: using simple Record type since it's obvious
+        const json: Record<string, unknown> = {
+          query,
+          index_id: process.env.NEXT_PUBLIC_TWLS_LIST_INDEX_ID,
+          search_options: searchOptions,
+          page_limit: limit,
+          sort_option: sortOption,
+          group_by: groupBy,
+          threshold,
+          operator,
+        }
+        if (searchOptions.length === 1) {
+          json.conversation_option = conversationOption
+        }
+
         const response = await api.post(`search`, {
-          json: {
-            query,
-            index_id: process.env.NEXT_PUBLIC_TWLS_LIST_INDEX_ID,
-            search_options: searchOptions,
-            page_limit: limit,
-            sort_option: sortOption,
-            group_by: groupBy,
-            threshold,
-            operator,
-            conversation_option: conversationOption,
-          },
+          json,
         })
         return response.json<TWLSSearchResponse<searchOption[]>>()
       }

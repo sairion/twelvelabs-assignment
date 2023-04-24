@@ -41,12 +41,15 @@ const SearchParamRadioGroup: React.FC<{
       <small className="text-sm font-medium leading-none">{label}</small>
       <div className="flex pt-2 pb-4 gap-2">
         <RadioGroup defaultValue={options[0][0]} onValueChange={setOption}>
-          {options.map(([value, label], idx) => (
-            <div key={label} className="flex items-center space-x-2">
-              <RadioGroupItem value={value} id={`${label}-${idx}`} />
-              <Label htmlFor="r1">{label}</Label>
-            </div>
-          ))}
+          {options.map(([value, label], idx) => {
+            const id = `${label}-${idx}`
+            return (
+              <div key={label} className="flex items-center space-x-2">
+                <RadioGroupItem value={value} id={id} />
+                <Label htmlFor={id}>{label}</Label>
+              </div>
+            )
+          })}
         </RadioGroup>
       </div>
     </div>
@@ -139,16 +142,18 @@ const SearchFilter: React.FC<{
             setInterSearchParams({ ...searchInterParams, threshold: value })
           }}
         />
-        <SearchParamRadioGroup
-          label="Converation Option"
-          options={[
-            ["semantic", "Semantic"],
-            ["exact_match", "Exact Match"],
-          ]}
-          setOption={(value: searchParamType["conversationOption"]) => {
-            setInterSearchParams({ ...searchInterParams, conversationOption: value })
-          }}
-        />
+        {searchInterParams.searchOptions.length > 1 ? null : (
+          <SearchParamRadioGroup
+            label="Converation Option"
+            options={[
+              ["semantic", "Semantic"],
+              ["exact_match", "Exact Match"],
+            ]}
+            setOption={(value: searchParamType["conversationOption"]) => {
+              setInterSearchParams({ ...searchInterParams, conversationOption: value })
+            }}
+          />
+        )}
       </div>
     </div>
   )
