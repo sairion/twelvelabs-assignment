@@ -2,19 +2,38 @@ import { useInfiniteQuery } from "@tanstack/react-query"
 import api from "@/libs/core/api"
 import type { TWLSSearchResponse, searchOption } from "../core/apiTypes"
 
+export type searchParamType = {
+  groupBy: "clip" | "video"
+  threshold: "high" | "medium" | "low"
+  sortOption: "score" | "clip_count"
+  conversationOption: "semantic" | "exact_match"
+  operator: "and" | "or"
+  searchOptions: searchOption[]
+}
+
 export default function useSearch({
   query,
   searchOptions,
   limit = 10,
   enabled,
+  groupBy,
+  threshold,
+  sortOption,
+  conversationOption,
+  operator,
 }: {
   query: string
   searchOptions: searchOption[]
   limit: number
   enabled: boolean
+  groupBy: searchParamType["groupBy"]
+  threshold: searchParamType["threshold"]
+  sortOption: searchParamType["sortOption"]
+  conversationOption: searchParamType["conversationOption"]
+  operator: searchParamType["operator"]
 }) {
   return useInfiniteQuery({
-    queryKey: ["search", limit, searchOptions, query],
+    queryKey: ["search", limit, searchOptions, groupBy, threshold, sortOption, conversationOption, operator, query],
     queryFn: async ({ pageParam }) => {
       if (pageParam) {
         const response = await api.get(`search/${pageParam}`)
@@ -26,6 +45,11 @@ export default function useSearch({
             index_id: process.env.NEXT_PUBLIC_TWLS_LIST_INDEX_ID,
             search_options: searchOptions,
             page_limit: limit,
+            sort_option: sortOption,
+            group_by: groupBy,
+            threshold,
+            operator,
+            conversation_option: conversationOption,
           },
         })
         return response.json<TWLSSearchResponse<searchOption[]>>()

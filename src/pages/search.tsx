@@ -5,7 +5,7 @@ import Layout from "@/components/Layout"
 import type { NextPageWithLayout } from "./_app"
 import { Video } from "@/components/Video"
 import GridLayout from "@/components/GridLayout"
-import useSearch from "@/libs/hooks/useSearch"
+import useSearch, { type searchParamType } from "@/libs/hooks/useSearch"
 import { Input } from "@/components/ui/input"
 import { Toggle } from "@/components/ui/toggle"
 import { searchOption } from "@/libs/core/apiTypes"
@@ -17,7 +17,7 @@ const SearchOptionToggle: React.FC<{
   label: string
   icon: LucideIcon
   searchOptions: searchOption[]
-  setSearchOptions: Dispatch<SetStateAction<searchOption[]>>
+  setSearchOptions(value: searchOption[]): void
 }> = ({ optionKey, label, searchOptions, setSearchOptions, icon: Icon }) => {
   return (
     <Toggle
@@ -37,10 +37,31 @@ const SearchOptionToggle: React.FC<{
   )
 }
 
+const defaultSearchParam = {
+  groupBy: "clip",
+  threshold: "low",
+  sortOption: "score",
+  conversationOption: "semantic",
+  operator: "or",
+  searchOptions: ["visual"],
+} satisfies searchParamType
+
 const Page: NextPageWithLayout = () => {
   const [query, setQuery] = useState("")
-  const [interMediateSearchOptions, setIntermediateSearchOptions] = useState<searchOption[]>(["visual"])
-  const [searchOptions, setSearchOptions] = useState<searchOption[]>(["visual"])
+  // intermediate search params
+  const [searchInterParams, setInterSearchParams] = useState<searchParamType>(defaultSearchParam)
+  // search options
+  const [groupBy, setGroupBy] = useState<searchParamType["groupBy"]>(defaultSearchParam.groupBy)
+  const [threshold, setThreshold] = useState<searchParamType["threshold"]>(defaultSearchParam.threshold)
+  const [sortOption, setSortOption] = useState<searchParamType["sortOption"]>(defaultSearchParam.sortOption)
+  const [conversationOption, setConversationOption] = useState<searchParamType["conversationOption"]>(
+    defaultSearchParam.conversationOption
+  )
+  const [operator, setOperator] = useState<searchParamType["operator"]>(defaultSearchParam.operator)
+  const [searchOptions, setSearchOptions] = useState<searchParamType["searchOptions"]>(
+    defaultSearchParam.searchOptions.slice()
+  )
+
   const {
     data,
     isLoading: isLoadingQuery,
@@ -50,7 +71,12 @@ const Page: NextPageWithLayout = () => {
   } = useSearch({
     query: query,
     limit: 12,
-    searchOptions: searchOptions,
+    searchOptions,
+    groupBy,
+    threshold,
+    sortOption,
+    conversationOption,
+    operator,
     enabled: query !== "",
   })
   const handleSubmit = useDebouncedCallback(
@@ -62,7 +88,13 @@ const Page: NextPageWithLayout = () => {
         refetch()
         return
       }
-      setSearchOptions(interMediateSearchOptions.slice())
+
+      setGroupBy(searchInterParams.groupBy)
+      setThreshold(searchInterParams.threshold)
+      setSortOption(searchInterParams.sortOption)
+      setConversationOption(searchInterParams.conversationOption)
+      setOperator(searchInterParams.operator)
+      setSearchOptions(searchInterParams.searchOptions.slice())
       setQuery(inputValue)
     },
     1_100,
@@ -70,6 +102,9 @@ const Page: NextPageWithLayout = () => {
   )
 
   const isLoading = query !== "" && (isLoadingQuery || handleSubmit.isPending())
+
+  const handleSetSearchOptions = (value: searchOption[]) =>
+    setInterSearchParams({ ...searchInterParams, searchOptions: value })
 
   return (
     <div>
@@ -96,22 +131,22 @@ const Page: NextPageWithLayout = () => {
             optionKey="visual"
             label="Visual"
             icon={ImageIcon}
-            searchOptions={interMediateSearchOptions}
-            setSearchOptions={setIntermediateSearchOptions}
+            searchOptions={searchInterParams.searchOptions}
+            setSearchOptions={handleSetSearchOptions}
           />
           <SearchOptionToggle
             optionKey="conversation"
             label="Conversation"
             icon={MessageCircle}
-            searchOptions={interMediateSearchOptions}
-            setSearchOptions={setIntermediateSearchOptions}
+            searchOptions={searchInterParams.searchOptions}
+            setSearchOptions={handleSetSearchOptions}
           />
           <SearchOptionToggle
             optionKey="text_in_video"
             label="Text in Video"
             icon={FileType}
-            searchOptions={interMediateSearchOptions}
-            setSearchOptions={setIntermediateSearchOptions}
+            searchOptions={searchInterParams.searchOptions}
+            setSearchOptions={handleSetSearchOptions}
           />
         </div>
       </div>
