@@ -39,6 +39,7 @@ const SearchOptionToggle: React.FC<{
 
 const Page: NextPageWithLayout = () => {
   const [query, setQuery] = useState("")
+  const [interMediateSearchOptions, setIntermediateSearchOptions] = useState<searchOption[]>(["visual"])
   const [searchOptions, setSearchOptions] = useState<searchOption[]>(["visual"])
   const {
     data,
@@ -61,7 +62,7 @@ const Page: NextPageWithLayout = () => {
         refetch()
         return
       }
-
+      setSearchOptions(interMediateSearchOptions.slice())
       setQuery(inputValue)
     },
     1_100,
@@ -95,22 +96,22 @@ const Page: NextPageWithLayout = () => {
             optionKey="visual"
             label="Visual"
             icon={ImageIcon}
-            searchOptions={searchOptions}
-            setSearchOptions={setSearchOptions}
+            searchOptions={interMediateSearchOptions}
+            setSearchOptions={setIntermediateSearchOptions}
           />
           <SearchOptionToggle
             optionKey="conversation"
             label="Conversation"
             icon={MessageCircle}
-            searchOptions={searchOptions}
-            setSearchOptions={setSearchOptions}
+            searchOptions={interMediateSearchOptions}
+            setSearchOptions={setIntermediateSearchOptions}
           />
           <SearchOptionToggle
             optionKey="text_in_video"
             label="Text in Video"
             icon={FileType}
-            searchOptions={searchOptions}
-            setSearchOptions={setSearchOptions}
+            searchOptions={interMediateSearchOptions}
+            setSearchOptions={setIntermediateSearchOptions}
           />
         </div>
       </div>
