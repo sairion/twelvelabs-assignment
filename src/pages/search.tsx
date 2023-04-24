@@ -11,6 +11,8 @@ import { Toggle } from "@/components/ui/toggle"
 import { searchOption } from "@/libs/core/apiTypes"
 import { Button } from "@/components/ui/button"
 import { PageLoading } from "@/components/Loading"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Label } from "@/components/ui/label"
 
 const SearchOptionToggle: React.FC<{
   optionKey: searchOption
@@ -37,6 +39,28 @@ const SearchOptionToggle: React.FC<{
   )
 }
 
+const SearchParamRadioGroup: React.FC<{
+  label: string
+  options: [string, string][]
+  setOption(value: string): void
+}> = ({ label, options, setOption }) => {
+  return (
+    <div>
+      <small className="text-sm font-medium leading-none">{label}</small>
+      <div className="flex pt-2 pb-4 gap-2">
+        <RadioGroup defaultValue={options[0][0]} onValueChange={setOption}>
+          {options.map(([value, label], idx) => (
+            <div key={label} className="flex items-center space-x-2">
+              <RadioGroupItem value={value} id={`${label}-${idx}`} />
+              <Label htmlFor="r1">{label}</Label>
+            </div>
+          ))}
+        </RadioGroup>
+      </div>
+    </div>
+  )
+}
+
 const defaultSearchParam = {
   groupBy: "clip",
   threshold: "low",
@@ -45,7 +69,7 @@ const defaultSearchParam = {
   operator: "or",
   searchOptions: ["visual"],
 } satisfies searchParamType
-
+console.log(defaultSearchParam)
 const Page: NextPageWithLayout = () => {
   const [query, setQuery] = useState("")
   // intermediate search params
@@ -84,11 +108,6 @@ const Page: NextPageWithLayout = () => {
       if (!inputValue) {
         return
       }
-      if (inputValue === query) {
-        refetch()
-        return
-      }
-
       setGroupBy(searchInterParams.groupBy)
       setThreshold(searchInterParams.threshold)
       setSortOption(searchInterParams.sortOption)
@@ -125,28 +144,83 @@ const Page: NextPageWithLayout = () => {
         </Button>
       </form>
       <div>
-        <small className="text-sm font-medium leading-none">Search Options</small>
-        <div className="flex pt-2 pb-4 gap-2">
-          <SearchOptionToggle
-            optionKey="visual"
-            label="Visual"
-            icon={ImageIcon}
-            searchOptions={searchInterParams.searchOptions}
-            setSearchOptions={handleSetSearchOptions}
+        <div>
+          <small className="text-sm font-medium leading-none">Search Options</small>
+          <div className="flex pt-2 pb-4 gap-2">
+            <SearchOptionToggle
+              optionKey="visual"
+              label="Visual"
+              icon={ImageIcon}
+              searchOptions={searchInterParams.searchOptions}
+              setSearchOptions={handleSetSearchOptions}
+            />
+            <SearchOptionToggle
+              optionKey="conversation"
+              label="Conversation"
+              icon={MessageCircle}
+              searchOptions={searchInterParams.searchOptions}
+              setSearchOptions={handleSetSearchOptions}
+            />
+            <SearchOptionToggle
+              optionKey="text_in_video"
+              label="Text in Video"
+              icon={FileType}
+              searchOptions={searchInterParams.searchOptions}
+              setSearchOptions={handleSetSearchOptions}
+            />
+          </div>
+        </div>
+        <div className="grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1">
+          <SearchParamRadioGroup
+            label="Group by"
+            options={[
+              ["clip", "Clip"],
+              ["video", "Video"],
+            ]}
+            setOption={(value: searchParamType["groupBy"]) => {
+              setInterSearchParams({ ...searchInterParams, groupBy: value })
+            }}
           />
-          <SearchOptionToggle
-            optionKey="conversation"
-            label="Conversation"
-            icon={MessageCircle}
-            searchOptions={searchInterParams.searchOptions}
-            setSearchOptions={handleSetSearchOptions}
+          <SearchParamRadioGroup
+            label="Operator"
+            options={[
+              ["or", "Or"],
+              ["and", "And"],
+            ]}
+            setOption={(value: searchParamType["operator"]) => {
+              setInterSearchParams({ ...searchInterParams, operator: value })
+            }}
           />
-          <SearchOptionToggle
-            optionKey="text_in_video"
-            label="Text in Video"
-            icon={FileType}
-            searchOptions={searchInterParams.searchOptions}
-            setSearchOptions={handleSetSearchOptions}
+          <SearchParamRadioGroup
+            label="Sort Option"
+            options={[
+              ["score", "Score"],
+              ["clip_count", "Clip Count"],
+            ]}
+            setOption={(value: searchParamType["sortOption"]) => {
+              setInterSearchParams({ ...searchInterParams, sortOption: value })
+            }}
+          />
+          <SearchParamRadioGroup
+            label="Threshold"
+            options={[
+              ["low", "Low"],
+              ["medium", "Medium"],
+              ["high", "High"],
+            ]}
+            setOption={(value: searchParamType["threshold"]) => {
+              setInterSearchParams({ ...searchInterParams, threshold: value })
+            }}
+          />
+          <SearchParamRadioGroup
+            label="Converation Option"
+            options={[
+              ["semantic", "Semantic"],
+              ["exact_match", "Exact Match"],
+            ]}
+            setOption={(value: searchParamType["conversationOption"]) => {
+              setInterSearchParams({ ...searchInterParams, conversationOption: value })
+            }}
           />
         </div>
       </div>
