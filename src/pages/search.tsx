@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Toggle } from "@/components/ui/toggle"
 import { searchOption } from "@/libs/core/apiTypes"
 import { Button } from "@/components/ui/button"
-import { Loading } from "@/components/Loading"
+import { PageLoading } from "@/components/Loading"
 
 const SearchOptionToggle: React.FC<{
   optionKey: searchOption
@@ -40,7 +40,13 @@ const SearchOptionToggle: React.FC<{
 const Page: NextPageWithLayout = () => {
   const [query, setQuery] = useState("")
   const [searchOptions, setSearchOptions] = useState<searchOption[]>(["visual"])
-  const { data, isLoading, hasNextPage, fetchNextPage, refetch } = useSearch({
+  const {
+    data,
+    isLoading: isLoadingQuery,
+    hasNextPage,
+    fetchNextPage,
+    refetch,
+  } = useSearch({
     query: query,
     limit: 12,
     searchOptions: searchOptions,
@@ -62,7 +68,7 @@ const Page: NextPageWithLayout = () => {
     { leading: true }
   )
 
-  const isSubmitting = query !== "" && (isLoading || handleSubmit.isPending())
+  const isLoading = query !== "" && (isLoadingQuery || handleSubmit.isPending())
 
   return (
     <div>
@@ -70,7 +76,7 @@ const Page: NextPageWithLayout = () => {
         <Input name="input" placeholder="Type something... ex) food" />
         <Button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isLoading}
           onClick={(e) => {
             e.preventDefault()
             // @ts-ignore
@@ -79,7 +85,7 @@ const Page: NextPageWithLayout = () => {
             const inputValue = formProps.input.toString().trim()
             handleSubmit(inputValue)
           }}>
-          {isSubmitting ? <Loading /> : "Search"}
+          Search
         </Button>
       </form>
       <div>
@@ -117,6 +123,7 @@ const Page: NextPageWithLayout = () => {
             }) ?? null
         )}
       </GridLayout>
+      {isLoading ? <PageLoading /> : null}
       {hasNextPage ? (
         <div className="flex justify-center py-4">
           <Button onClick={() => fetchNextPage()}>Load more</Button>
